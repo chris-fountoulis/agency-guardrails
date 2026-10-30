@@ -114,7 +114,7 @@ class Config:
     def relpath(self, path: str) -> str:
         """Path relative to the config root, POSIX style, for glob matching."""
         try:
-            rel = os.path.relpath(os.path.abspath(path), str(self.root))
+            rel = os.path.relpath(os.path.realpath(path), os.path.realpath(str(self.root)))
         except ValueError:  # different drive on Windows
             return Path(path).as_posix()
         return Path(rel).as_posix()
