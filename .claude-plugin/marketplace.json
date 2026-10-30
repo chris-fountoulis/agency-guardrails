@@ -1,0 +1,15 @@
+{
+  "name": "agency-guardrails",
+  "description": "Guardrails for AI agents in a marketing agency: Claude Code hooks that enforce business, legal and house-style rules on content and actions.",
+  "owner": {
+    "name": "Chris Fountoulis",
+    "email": "chris@growthofinfluence.com"
+  },
+  "plugins": [
+    {
+      "name": "agency-guardrails",
+      "source": "./",
+      "description": "Lint your marketing like you lint your code: PreToolUse, PostToolUse and Stop hooks that enforce business, legal and house-style rules."
+    }
+  ]
+}
