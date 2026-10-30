@@ -1,7 +1,12 @@
 # Contributing
 
+[Back to README](README.md)
+
 Thanks for helping make agency content safer to ship. Bug reports, false positives, new rules and better
 citations are all welcome.
+
+**On this page:** [Development setup](#development-setup) · [Before you open a pull request](#before-you-open-a-pull-request) ·
+[Scope](#scope)
 
 ## Development setup
 
@@ -18,7 +23,7 @@ standard library.
 
 ## Before you open a pull request
 
-Run what CI runs:
+Run what CI runs (the full list of checks is in [docs/methodology.md](docs/methodology.md#continuous-integration)):
 
 ```bash
 python -m unittest discover -s tests -t .
@@ -42,8 +47,15 @@ Rules belong here when they encode a widely applicable business, legal or publis
 with a citable source. Client-specific or brand-specific rules belong in your own plugin module (see
 `examples/custom-rule/`).
 
-Rules are engineering heuristics, not legal advice. Phrase rationales accordingly: what the rule protects against
-and where the requirement comes from, not a conclusion that something is or is not lawful.
+> [!IMPORTANT]
+> Rules are engineering heuristics, not legal advice. Phrase rationales accordingly: what the rule protects against
+> and where the requirement comes from, not a conclusion that something is or is not lawful.
 
 By contributing you agree that your contributions are licensed under the MIT License and that you follow the
 [Code of Conduct](CODE_OF_CONDUCT.md).
+
+[Back to README](README.md)
+
+---
+
+Built by [Chris Fountoulis](https://chrisfountoulis.com) at [Growth Of Influence](https://growthofinfluence.com).

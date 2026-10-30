@@ -21,3 +21,7 @@ Reports that matter most for this project:
 
 Bypasses of heuristic content rules (rewording a claim so a rule no longer matches) are useful bug reports, but
 they are not security vulnerabilities: open a regular issue for those.
+
+---
+
+Built by [Chris Fountoulis](https://chrisfountoulis.com) at [Growth Of Influence](https://growthofinfluence.com).
