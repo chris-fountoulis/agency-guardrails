@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: If you use agency-guardrails in research or a publication, please cite it as below.
+title: "agency-guardrails: business, legal and house-style guardrails for AI agents in a marketing agency"
+type: software
+authors:
+  - family-names: Fountoulis
+    given-names: Chris
+    affiliation: Growth Of Influence
+version: 0.1.0
+date-released: 2026-10-30
+license: MIT
+repository-code: https://github.com/chris-fountoulis/agency-guardrails
+keywords:
+  - claude-code
+  - ai-agents
+  - guardrails
+  - marketing compliance
+  - linting
