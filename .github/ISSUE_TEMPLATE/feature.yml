@@ -1,0 +1,29 @@
+name: Rule or feature request
+description: Propose a new rule, a new pack or a feature.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What goes wrong today
+      description: The mistake an agent (or a person) makes that this would catch. A real example helps most.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed rule or feature
+      description: For a rule, what it should flag and what it should leave alone.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Primary source
+      description: The directive, regulation, standard or official documentation the rule is based on.
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: This applies beyond one brand or client (otherwise a custom plugin rule is the better home).
