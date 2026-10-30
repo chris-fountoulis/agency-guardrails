@@ -1,5 +1,7 @@
 # Claude Code integration
 
+[Back to README](../README.md)
+
 agency-guardrails plugs into Claude Code through three hooks. Together they move the rules from "a reviewer
 notices later" to "the agent cannot do it, or fixes it in the same turn".
 
@@ -9,12 +11,24 @@ notices later" to "the agent cannot do it, or fixes it in the same turn".
 | `PostToolUse` | `Write\|Edit\|MultiEdit\|NotebookEdit` | Lints the file that was just written with every enabled content rule | `decision: "block"` plus `reason` for errors, `hookSpecificOutput.additionalContext` for warnings only |
 | `Stop` | all | Re-checks every modified or untracked file in the git work tree before the agent ends its turn | `decision: "block"` plus `reason` while errors remain |
 
-The tool call still happens for PostToolUse (the file is written); the block puts the findings next to the tool
-result so the agent fixes them before moving on. The Stop hook honours `stop_hook_active`, so it blocks at most
-once per stop and can never trap the agent in a loop.
+> [!NOTE]
+> The tool call still happens for PostToolUse (the file is written); the block puts the findings next to the tool
+> result so the agent fixes them before moving on. The Stop hook honours `stop_hook_active`, so it blocks at most
+> once per stop and can never trap the agent in a loop.
 
+> [!WARNING]
 > agency-guardrails is engineering tooling, not legal advice. The hooks make an agent stop and look; a person
 > still owns what ships.
+
+## Contents
+
+- [Option 1: install the plugin](#option-1-install-the-plugin)
+- [Option 2: settings.json with the CLI](#option-2-settingsjson-with-the-cli)
+- [Configuration](#configuration)
+- [The contract, precisely](#the-contract-precisely)
+- [What the agent sees](#what-the-agent-sees)
+- [Try a hook by hand](#try-a-hook-by-hand)
+- [The emergency override](#the-emergency-override)
 
 ## Option 1: install the plugin
 
@@ -64,8 +78,9 @@ Install the CLI (`pipx install git+https://github.com/chris-fountoulis/agency-gu
 }
 ```
 
-Use only the hooks you want. A common start is PreToolUse alone (secrets and deploy safety), then PostToolUse
-once the content rules are tuned for your copy.
+> [!TIP]
+> Use only the hooks you want. A common start is PreToolUse alone (secrets and deploy safety), then PostToolUse
+> once the content rules are tuned for your copy.
 
 ## Configuration
 
@@ -132,6 +147,14 @@ echo '{"cwd": ".", "tool_name": "Write", "tool_input": {"file_path": "bad/care-p
 ## The emergency override
 
 Every deploy-safety block names the override token (`GUARDRAILS_OVERRIDE=1` by default, `override` in the
-`[deploy-safety]` table). A command that contains it passes. Keep it for a site that is down, and pair it with a
-rule in your team docs: whoever uses it syncs the repository and posts what changed. Set `override = ""` to remove
-the escape hatch entirely.
+`[deploy-safety]` table). A command that contains it passes.
+
+> [!CAUTION]
+> Keep the override for a site that is down and pair it with a rule in your team docs: whoever uses it syncs the
+> repository and posts what changed. Set `override = ""` to remove the escape hatch entirely.
+
+[Back to README](../README.md)
+
+---
+
+Built by [Chris Fountoulis](https://chrisfountoulis.com) at [Growth Of Influence](https://growthofinfluence.com).

@@ -1,10 +1,17 @@
 # GitHub Action
 
+[Back to README](../README.md)
+
 `action.yml` at the repository root is a composite action. It installs agency-guardrails from the action
 checkout, runs `guardrails check`, annotates the pull request diff with every finding, writes a findings table to
 the job summary and, if you ask for it, uploads SARIF to GitHub code scanning.
 
+> [!WARNING]
 > Engineering tooling, not legal advice. A green check means no rule matched, not that copy is compliant.
+
+**On this page:** [Quick start](#quick-start) · [Inputs](#inputs) · [Outputs](#outputs) ·
+[Annotations](#pull-request-annotations) · [SARIF](#code-scanning-sarif) · [Changed files only](#only-check-what-changed) ·
+[Without the action](#without-the-action)
 
 ## Quick start
 
@@ -82,8 +89,10 @@ steps:
 ```
 
 Every SARIF rule carries the rationale, the fix and the primary source as `helpUri`, so the code scanning alert
-links straight to the directive or guideline behind it. Code scanning for private repositories needs GitHub
-Advanced Security; the annotations work everywhere.
+links straight to the directive or guideline behind it.
+
+> [!NOTE]
+> Code scanning for private repositories needs GitHub Advanced Security. The annotations work everywhere.
 
 ## Only check what changed
 
@@ -111,3 +120,9 @@ The action is a thin wrapper. Any CI system can run the same thing:
 pip install git+https://github.com/chris-fountoulis/agency-guardrails
 guardrails check --format github --sarif-file guardrails.sarif content site
 ```
+
+[Back to README](../README.md)
+
+---
+
+Built by [Chris Fountoulis](https://chrisfountoulis.com) at [Growth Of Influence](https://growthofinfluence.com).

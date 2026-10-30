@@ -1,11 +1,23 @@
 # Writing rules
 
+[Back to README](../README.md)
+
 Every rule is a small Python class. Built-in rules live in `agency_guardrails/rules/`; your own rules can live in
 any module and load through `plugins` in `guardrails.toml`. Both kinds get the same config validation, inline and
 path ignores, severity overrides, output formats, Claude Code hooks and GitHub Action support.
 
+> [!IMPORTANT]
 > Rules are engineering heuristics. Write the rationale so a reader understands what the rule protects against,
-> cite the primary source, and never present a rule as a legal determination.
+> cite the primary source and never present a rule as a legal determination. The reasoning behind that is in
+> [methodology.md](methodology.md).
+
+## Contents
+
+- [Anatomy of a content rule](#anatomy-of-a-content-rule)
+- [What a rule can read](#what-a-rule-can-read)
+- [Action rules](#action-rules)
+- [Testing a rule](#testing-a-rule)
+- [Contributing a built-in rule](#contributing-a-built-in-rule)
 
 ## Anatomy of a content rule
 
@@ -47,8 +59,9 @@ packs = ["acme-brand", "house-style"]
 product = "SourDough Pro"
 ```
 
-`@register` validates the class when the module is imported: a rule without a title, rationale, an https
-citation or a well-formed id fails loudly instead of shipping undocumented.
+> [!NOTE]
+> `@register` validates the class when the module is imported: a rule without a title, rationale, an https
+> citation or a well-formed id fails loudly instead of shipping undocumented.
 
 ## What a rule can read
 
@@ -94,8 +107,9 @@ def test_flags_wrong_case():
     assert [f.line for f in found] == [1]
 ```
 
-Test strings that look like credentials must be built at runtime (see `tests/fakes.py`), so the repository never
-contains a literal that secret scanners flag.
+> [!WARNING]
+> Test strings that look like credentials must be built at runtime (see `tests/fakes.py`), so the repository never
+> contains a literal that secret scanners flag.
 
 ## Contributing a built-in rule
 
@@ -104,3 +118,9 @@ contains a literal that secret scanners flag.
 2. Add positive and negative tests.
 3. Run `python scripts/gen_rules_doc.py` to regenerate [`rules.md`](rules.md); CI fails if it is stale.
 4. If the rule should fire on the sample site, extend `examples/site/bad/` and keep `examples/site/fixed/` clean.
+
+[Back to README](../README.md)
+
+---
+
+Built by [Chris Fountoulis](https://chrisfountoulis.com) at [Growth Of Influence](https://growthofinfluence.com).
