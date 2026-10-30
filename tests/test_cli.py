@@ -98,5 +98,51 @@ class RulesCommandTest(unittest.TestCase):
         self.assertEqual(code, 2)
 
 
+class InitCommandTest(unittest.TestCase):
+    def test_writes_loadable_config(self):
+        from agency_guardrails.config import load
+
+        with temp_tree({}) as root:
+            code, out, _ = run("init")
+            self.assertEqual(code, 0)
+            self.assertIn("wrote ./guardrails.toml", out)
+            cfg = load(start=str(root))
+            self.assertEqual(cfg.pack_options["house-style"]["banned_chars"], [EM, "\N{EN DASH}"])
+            self.assertEqual(cfg.hooks["pre_write_packs"], ["secrets"])
+            self.assertTrue((root / "consent" / "approved.txt").is_file())
+            self.assertEqual(run("init")[0], 2)
+            self.assertEqual(run("init", "--force")[0], 0)
+            code, out, _ = run("check", "consent", "guardrails.toml")
+            self.assertEqual(code, 0, out)
+
+    def test_starter_has_no_banned_characters(self):
+        from agency_guardrails.starter import STARTER_CONFIG
+
+        self.assertNotIn(EM, STARTER_CONFIG)
+        self.assertTrue(all(ord(c) < 128 for c in STARTER_CONFIG))
+
+
+class RedactCommandTest(unittest.TestCase):
+    def run_stdin(self, text, *argv):
+        import sys
+
+        old = sys.stdin
+        sys.stdin = io.StringIO(text)
+        try:
+            return run("redact", *argv)
+        finally:
+            sys.stdin = old
+
+    def test_redacts(self):
+        from tests import fakes
+
+        text = "token %s and words\n" % fakes.github()
+        code, out, err = self.run_stdin(text, "--report")
+        self.assertEqual((code, out), (0, "token [REDACTED:github-token] and words\n"))
+        self.assertEqual(err, "redacted 1 github-token\n")
+        self.assertEqual(self.run_stdin(text, "--check")[0], 1)
+        self.assertEqual(self.run_stdin("nothing here\n", "--check"), (0, "nothing here\n", ""))
+
+
 if __name__ == "__main__":
     unittest.main()

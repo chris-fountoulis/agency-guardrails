@@ -10,6 +10,8 @@ from typing import List, Optional
 from agency_guardrails import __version__, catalog, output, registry
 from agency_guardrails.config import FAIL_ON, ConfigError, load
 from agency_guardrails.engine import check_paths, failed
+from agency_guardrails.redact import redact
+from agency_guardrails.starter import STARTER_CONFIG, STARTER_CONSENT
 
 EXIT_OK = 0
 EXIT_FINDINGS = 1
@@ -90,6 +92,42 @@ def cmd_explain(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_init(args: argparse.Namespace) -> int:
+    target = os.path.join(args.dir, "guardrails.toml")
+    if os.path.exists(target) and not args.force:
+        sys.stderr.write("guardrails: %s already exists (use --force to overwrite)\n" % target)
+        return EXIT_USAGE
+    os.makedirs(args.dir, exist_ok=True)
+    with open(target, "w", encoding="utf-8") as fh:
+        fh.write(STARTER_CONFIG)
+    written = [target]
+    consent = os.path.join(args.dir, "consent", "approved.txt")
+    if not args.no_consent and not os.path.exists(consent):
+        os.makedirs(os.path.dirname(consent), exist_ok=True)
+        with open(consent, "w", encoding="utf-8") as fh:
+            fh.write(STARTER_CONSENT)
+        written.append(consent)
+    for path in written:
+        sys.stdout.write("wrote %s\n" % path)
+    sys.stdout.write("next: edit watch_names and protected_hosts, then run `guardrails check .`\n")
+    return EXIT_OK
+
+
+def cmd_redact(args: argparse.Namespace) -> int:
+    text = sys.stdin.read()
+    clean, hits = redact(text, generic=not args.no_generic)
+    sys.stdout.write(clean)
+    if args.report:
+        counts = {}
+        for h in hits:
+            counts[h.kind] = counts.get(h.kind, 0) + 1
+        for kind in sorted(counts):
+            sys.stderr.write("redacted %d %s\n" % (counts[kind], kind))
+    if args.check and hits:
+        return EXIT_FINDINGS
+    return EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="guardrails",
@@ -121,6 +159,18 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("explain", help="explain one rule: why, fix, source and options")
     p.add_argument("rule_id", metavar="RULE", help="rule id, for example GR-EU-001")
     p.set_defaults(func=cmd_explain)
+
+    p = sub.add_parser("init", help="write a starter guardrails.toml and consent registry")
+    p.add_argument("--dir", default=".", help="directory to write into (default: .)")
+    p.add_argument("--force", action="store_true", help="overwrite an existing guardrails.toml")
+    p.add_argument("--no-consent", action="store_true", help="do not create consent/approved.txt")
+    p.set_defaults(func=cmd_init)
+
+    p = sub.add_parser("redact", help="redact credentials from stdin to stdout")
+    p.add_argument("--report", action="store_true", help="print what was redacted to stderr")
+    p.add_argument("--check", action="store_true", help="exit 1 if anything was redacted")
+    p.add_argument("--no-generic", action="store_true", help="only redact known token shapes and private keys")
+    p.set_defaults(func=cmd_redact)
     return parser
 
 
