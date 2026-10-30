@@ -1,0 +1,23 @@
+# Copy to .github/workflows/guardrails.yml in your content or website repository.
+name: guardrails
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  security-events: write # only needed for upload-sarif
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint content with agency-guardrails
+        uses: chris-fountoulis/agency-guardrails@v0.1.0
+        with:
+          paths: content site
+          upload-sarif: "true"
