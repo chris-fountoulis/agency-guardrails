@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: python -m pip install --disable-pip-version-check .
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests -t . -v
+
+      - name: docs/rules.md is up to date
+        run: python scripts/gen_rules_doc.py --check
+
+      - name: CLI smoke test
+        run: |
+          guardrails --version
+          guardrails rules
+          guardrails explain GR-EU-001
+          guardrails check examples/site/fixed
+          if guardrails check examples/site/bad; then echo "bad example should fail" && exit 1; fi
+
+      - name: Dogfood (house style and secrets on this repository)
+        run: guardrails check .
+
+      - name: No em or en dashes anywhere
+        run: |
+          if grep -rnP '[\x{2013}\x{2014}]' --exclude-dir=.git .; then
+            echo "Found an em or en dash" && exit 1
+          fi
+
+  action:
+    name: GitHub Action on examples/
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fixed site passes
+        uses: ./
+        with:
+          paths: examples/site/fixed
+
+      - name: Bad site fails with annotations
+        id: bad
+        uses: ./
+        continue-on-error: true
+        with:
+          paths: examples/site/bad
+          setup-python: "false"
+          sarif-file: bad.sarif
+
+      - name: Check the action outcome
+        env:
+          OUTCOME: ${{ steps.bad.outcome }}
+          ERRORS: ${{ steps.bad.outputs.errors }}
+          WARNINGS: ${{ steps.bad.outputs.warnings }}
+        run: |
+          echo "outcome=$OUTCOME errors=$ERRORS warnings=$WARNINGS"
+          test "$OUTCOME" = "failure"
+          test "$ERRORS" -gt 0
+          test -s bad.sarif

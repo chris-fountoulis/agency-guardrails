@@ -1,0 +1,12 @@
+# agency-guardrails checks its own repository: no banned characters in the docs
+# and no credentials anywhere. The sample site is excluded because it is wrong
+# on purpose.
+[guardrails]
+packs = ["house-style", "secrets", "deploy-safety"]
+extend_exclude = ["examples/site/bad/**"]
+
+[house-style]
+banned_chars = ["\u2014", "\u2013"]
+
+[deploy-safety]
+block_direct_push = false
