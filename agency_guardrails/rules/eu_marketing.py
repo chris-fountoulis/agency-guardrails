@@ -83,16 +83,30 @@ def normalise_rate(rate: float) -> float:
 
 
 def find_prices(text: str, currencies: Iterable[str]) -> List[Tuple[int, int, str, float]]:
-    """Return (start, end, symbol, amount) for every price in the prose view."""
+    """Return (start, end, symbol, amount) for every price in the prose view.
+
+    The symbol is returned with a trailing space when it was written before the
+    number ("EUR 15") and a leading space when written after it ("15 euro"),
+    so :func:`price_label` can reproduce the original style.
+    """
     out = []
     for m in price_regex(currencies).finditer(text):
-        num = m.group("a") or m.group("b")
-        symbol = m.group("pre") or m.group("post")
+        if m.group("pre"):
+            num, symbol = m.group("a"), m.group("pre") + ("" if not m.group("pre")[-1].isalnum() else " ")
+        else:
+            num, symbol = m.group("b"), " " + m.group("post")
         try:
             out.append((m.start(), m.end(), symbol, parse_amount(num)))
         except ValueError:
             continue
     return out
+
+
+def price_label(symbol: str, amount: float) -> str:
+    """Render an amount in the same style as the price it came from."""
+    if symbol.startswith(" "):
+        return format_amount(amount) + symbol
+    return symbol + format_amount(amount)
 
 
 def _flat(text: str) -> str:
@@ -216,9 +230,9 @@ class PriceWithoutVat(Rule):
             passage = doc.text[a:b]
             has_incl = bool(incl and incl.search(passage))
             has_excl = bool(excl and excl.search(passage))
-            label = re.sub(r"\s+", " ", doc.text[start:end]).strip()
+            label = price_label(symbol, amount)
             gross = amount * (1 + rate)
-            suggestion = "%s %s incl. VAT" % (format_amount(gross), symbol) if rate else "the VAT-inclusive price"
+            suggestion = "%s incl. VAT" % price_label(symbol, gross) if rate else "the VAT-inclusive price"
             if not has_incl:
                 why = "is marked as excluding VAT" if has_excl else "has no VAT-inclusive figure next to it"
                 yield self.finding(

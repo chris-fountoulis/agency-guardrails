@@ -53,7 +53,7 @@ class PriceWithoutVatTest(unittest.TestCase):
     def test_flags_bare_price_with_suggestion(self):
         found = run_rule(self.RULE, "Hosting costs %s15 per month.\n" % EUR)
         self.assertEqual(len(found), 1)
-        self.assertIn("at 24%% VAT show 18.60 %s incl. VAT" % EUR, found[0].message)
+        self.assertIn("Price %s15 has no VAT-inclusive figure next to it; at 24%% VAT show %s18.60 incl. VAT" % (EUR, EUR), found[0].message)
 
     def test_vat_rate_is_configurable(self):
         found = run_rule(self.RULE, "Only 100 EUR.\n", options={"vat_rate": 0.2})
@@ -72,7 +72,7 @@ class PriceWithoutVatTest(unittest.TestCase):
         text = "%s100 excl. VAT (%s119 incl. VAT).\n" % (EUR, EUR)
         found = run_rule(self.RULE, text)
         self.assertEqual(len(found), 1)
-        self.assertIn("does not match 24% VAT (expected 124", found[0].message)
+        self.assertIn("does not match 24%% VAT (expected %s124 incl. VAT)" % EUR, found[0].message)
 
     def test_html_entity_price(self):
         found = run_rule(self.RULE, "<td>&euro;15</td>", path="t.html")
