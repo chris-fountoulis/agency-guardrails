@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from agency_guardrails import __version__, catalog, output, registry
 from agency_guardrails.config import FAIL_ON, ConfigError, load
-from agency_guardrails.engine import check_paths, failed
+from agency_guardrails.engine import Result, check_paths, check_text, failed
 from agency_guardrails.redact import redact
 from agency_guardrails.starter import STARTER_CONFIG, STARTER_CONSENT
 
@@ -37,7 +37,7 @@ def _write(path: Optional[str], text: str) -> None:
 def cmd_check(args: argparse.Namespace) -> int:
     paths = args.paths or ["."]
     try:
-        cfg = load(args.config, start=paths[0])
+        cfg = load(args.config, start="." if paths == ["-"] else paths[0])
     except ConfigError as exc:
         sys.stderr.write("guardrails: config error: %s\n" % exc)
         return EXIT_USAGE
@@ -48,11 +48,15 @@ def cmd_check(args: argparse.Namespace) -> int:
             return EXIT_USAGE
         cfg.packs = list(args.pack)
         cfg.enable = []
-    try:
-        result = check_paths(paths, cfg)
-    except FileNotFoundError as exc:
-        sys.stderr.write("guardrails: no such file or directory: %s\n" % exc)
-        return EXIT_USAGE
+    if paths == ["-"]:
+        name = args.stdin_filename or "stdin.md"
+        result = Result(findings=check_text(sys.stdin.read(), name, cfg), files_checked=1)
+    else:
+        try:
+            result = check_paths(paths, cfg)
+        except FileNotFoundError as exc:
+            sys.stderr.write("guardrails: no such file or directory: %s\n" % exc)
+            return EXIT_USAGE
     findings = result.findings
     rules = cfg.enabled_rules()
     if args.format == "sarif":
@@ -145,7 +149,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", metavar="<command>")
 
     p = sub.add_parser("check", help="check files and directories")
-    p.add_argument("paths", nargs="*", help="files or directories (default: .)")
+    p.add_argument("paths", nargs="*", help="files or directories (default: .); - reads stdin")
+    p.add_argument("--stdin-filename", help="file name to report for stdin; its extension picks the parser (default: stdin.md)")
     p.add_argument("-c", "--config", help="path to guardrails.toml (default: discovered from the first path)")
     p.add_argument("-f", "--format", choices=["text", "json", "sarif", "github"], default="text")
     p.add_argument("-o", "--output", help="write the report to a file instead of stdout")

@@ -74,6 +74,21 @@ class CheckCommandTest(unittest.TestCase):
         self.assertEqual(run()[0], 2)
 
 
+class StdinCheckTest(unittest.TestCase):
+    def test_check_stdin_with_filename(self):
+        import sys
+
+        old = sys.stdin
+        sys.stdin = io.StringIO("<p>Only &euro;9 a month.</p>")
+        try:
+            with temp_tree({"guardrails.toml": CONFIG}):
+                code, out, _ = run("check", "--no-color", "--stdin-filename", "offer.html", "-")
+        finally:
+            sys.stdin = old
+        self.assertEqual(code, 1)
+        self.assertIn("offer.html\n  1:9      error  GR-EU-002", out)
+
+
 class RulesCommandTest(unittest.TestCase):
     def test_list(self):
         code, out, _ = run("rules")

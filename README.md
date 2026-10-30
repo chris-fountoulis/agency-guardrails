@@ -33,6 +33,7 @@ In your own project:
 ```bash
 guardrails init          # writes a commented guardrails.toml and a consent registry
 guardrails check .       # text, --format json, --format sarif or --format github
+echo "Our new offer" | guardrails check --stdin-filename draft.md -   # check text before it is a file
 ```
 
 ## Demo

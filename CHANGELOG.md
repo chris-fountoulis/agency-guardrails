@@ -28,8 +28,8 @@ First public release.
   credential assignments.
 - `deploy-safety` pack of PreToolUse action rules: GR-DEP-001 writes to protected hosts or paths, GR-DEP-002
   edits to protected files, GR-DEP-003 force or direct pushes to protected branches.
-- CLI: `guardrails check` (text, JSON, SARIF 2.1.0, GitHub annotations), `rules`, `explain`, `init`, `redact`
-  and `hook`.
+- CLI: `guardrails check` (text, JSON, SARIF 2.1.0, GitHub annotations, stdin with `-`), `rules`, `explain`,
+  `init`, `redact` and `hook`.
 - Claude Code PreToolUse, PostToolUse and Stop hooks, packaged as a plugin and a one-plugin marketplace.
 - Composite GitHub Action with PR annotations, job summary, outputs and optional SARIF upload.
 - Custom rule packs through `plugins` in `guardrails.toml`, with an example in `examples/custom-rule/`.
