@@ -47,5 +47,13 @@ class PluginPackagingTest(unittest.TestCase):
         self.assertIn("GR-DEP-003", out["hookSpecificOutput"]["permissionDecisionReason"])
 
 
+class GeneratedDocsTest(unittest.TestCase):
+    def test_rules_md_is_current(self):
+        from agency_guardrails.catalog import all_rules_markdown
+
+        current = (ROOT / "docs" / "rules.md").read_text(encoding="utf-8")
+        self.assertEqual(current, all_rules_markdown(), "run python scripts/gen_rules_doc.py")
+
+
 if __name__ == "__main__":
     unittest.main()
