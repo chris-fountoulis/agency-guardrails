@@ -1,42 +1,69 @@
 <p align="center">
-  <img src=".github/assets/banner.png" alt="agency-guardrails: lint your marketing like your code. Claude Code hooks, CLI and GitHub Action." width="100%">
+  <img src=".github/assets/hero.svg" alt="agency-guardrails: lint your marketing like your code. Claude Code hooks, a CLI and a GitHub Action that stop AI agents from shipping legal, SEO and house-style mistakes." width="100%">
 </p>
 
-# agency-guardrails
+<h3 align="center">Lint your marketing like you lint your code.</h3>
 
-**Lint your marketing like you lint your code.** Claude Code hooks, a CLI and a GitHub Action that stop AI agents
-from shipping the business, legal and house-style mistakes that code linters never look at: a conditional "free"
-offer, a price with no VAT-inclusive figure, a client named without consent, a secret in a draft, a hotfix pushed
-straight to the production server.
+<p align="center">
+  Claude Code hooks, a CLI and a GitHub Action that stop AI agents from shipping the business, legal and
+  house-style mistakes code linters never look at.
+</p>
 
-[![CI](https://github.com/chris-fountoulis/agency-guardrails/actions/workflows/ci.yml/badge.svg)](https://github.com/chris-fountoulis/agency-guardrails/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/chris-fountoulis/agency-guardrails?color=0D1B4B)](LICENSE)
-[![Release](https://img.shields.io/github/v/tag/chris-fountoulis/agency-guardrails?sort=semver&label=release&color=F5A623)](https://github.com/chris-fountoulis/agency-guardrails/tags)
-[![Python 3.9 to 3.13](https://img.shields.io/badge/python-3.9%20to%203.13-0D1B4B)](pyproject.toml)
-[![Dependencies: none](https://img.shields.io/badge/dependencies-none-0D1B4B)](pyproject.toml)
+<p align="center">
+  <a href="https://github.com/chris-fountoulis/agency-guardrails/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/chris-fountoulis/agency-guardrails/ci.yml?branch=main&style=for-the-badge&label=CI&color=0D1B4B&labelColor=F5A623" alt="CI status"></a>
+  <a href="https://github.com/chris-fountoulis/agency-guardrails/tags"><img src="https://img.shields.io/github/v/tag/chris-fountoulis/agency-guardrails?sort=semver&style=for-the-badge&label=release&color=0D1B4B&labelColor=F5A623" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/chris-fountoulis/agency-guardrails?style=for-the-badge&color=0D1B4B&labelColor=F5A623" alt="MIT license"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.9%20to%203.13-0D1B4B?style=for-the-badge&labelColor=F5A623" alt="Python 3.9 to 3.13"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/dependencies-none-0D1B4B?style=for-the-badge&labelColor=F5A623" alt="No dependencies"></a>
+  <br>
+  <a href="https://growthofinfluence.com"><img src="https://img.shields.io/badge/built%20by-Growth%20Of%20Influence-0D1B4B?style=for-the-badge&labelColor=F5A623" alt="Built by Growth Of Influence"></a>
+  <a href="https://chrisfountoulis.com"><img src="https://img.shields.io/badge/chrisfountoulis.com-visit-0D1B4B?style=for-the-badge&labelColor=F5A623" alt="chrisfountoulis.com"></a>
+</p>
 
+<p align="center">
+  <a href="#30-second-quickstart">Quickstart</a> ·
+  <a href="#features">Rules</a> ·
+  <a href="#claude-code">Claude Code</a> ·
+  <a href="#github-action">GitHub Action</a> ·
+  <a href="#configuration">Config</a> ·
+  <a href="#methodology">Methodology</a> ·
+  <a href="docs/rules.md">Rule reference</a>
+</p>
+
+A conditional "free" offer. A price with no VAT-inclusive figure. A client named without consent. A secret in a
+draft. A hotfix pushed straight to the production server. agency-guardrails catches each of these before it
+ships, whether the author is an AI agent or a person. Built by [Chris Fountoulis](https://chrisfountoulis.com) at
+[Growth Of Influence](https://growthofinfluence.com), where it runs on the agency's own content and site code.
+
+> [!WARNING]
 > **Not legal advice.** agency-guardrails is engineering tooling. Its rules are heuristics that make an agent, and
-> then a person, stop and look before content ships. Passing them does not make copy compliant, and failing one
+> then a person, stop and look before content ships. Passing them does not make copy compliant and failing one
 > is not a legal finding.
 
-## 30-second quickstart
+## Contents
 
-```bash
-pipx install git+https://github.com/chris-fountoulis/agency-guardrails   # or: pip install git+https://...
-git clone https://github.com/chris-fountoulis/agency-guardrails && cd agency-guardrails
-guardrails check examples/site/bad      # a page an agent wrote: exits 1 with findings
-guardrails check examples/site/fixed    # the same page, fixed: exits 0
-```
-
-In your own project:
-
-```bash
-guardrails init          # writes a commented guardrails.toml and a consent registry
-guardrails check .       # text, --format json, --format sarif or --format github
-echo "Our new offer" | guardrails check --stdin-filename draft.md -   # check text before it is a file
-```
+- [Demo](#demo)
+- [30-second quickstart](#30-second-quickstart)
+- [Why this exists](#why-this-exists)
+- [Features](#features)
+- [How it works](#how-it-works)
+- [Claude Code](#claude-code)
+- [GitHub Action](#github-action)
+- [Configuration](#configuration)
+- [Methodology](#methodology)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [About](#about)
 
 ## Demo
+
+<p align="center">
+  <img src=".github/assets/demo.svg" alt="Terminal recording: guardrails check on a sample bakery page prints 9 errors and 6 warnings, including a conditional free claim, a price without VAT, an uptime promise and an em dash." width="100%">
+</p>
+
+<details open>
+<summary><b>Plain-text output</b></summary>
 
 This is the real output of `guardrails check examples/site/bad/bakery-website-speed.html`:
 
@@ -61,6 +88,8 @@ examples/site/bad/bakery-website-speed.html
 1 file checked, 9 errors, 6 warnings
 ```
 
+</details>
+
 Inside Claude Code the same findings reach the agent the moment it writes the file, and a risky command never runs:
 
 ```json
@@ -73,23 +102,47 @@ Inside Claude Code the same findings reach the agent the moment it writes the fi
 }
 ```
 
+## 30-second quickstart
+
+```bash
+pipx install git+https://github.com/chris-fountoulis/agency-guardrails   # or: pip install git+https://...
+git clone https://github.com/chris-fountoulis/agency-guardrails && cd agency-guardrails
+guardrails check examples/site/bad      # a page an agent wrote: exits 1 with findings
+guardrails check examples/site/fixed    # the same page, fixed: exits 0
+```
+
+In your own project:
+
+```bash
+guardrails init          # writes a commented guardrails.toml and a consent registry
+guardrails check .       # text, --format json, --format sarif or --format github
+echo "Our new offer" | guardrails check --stdin-filename draft.md -   # check text before it is a file
+```
+
+> [!TIP]
+> Run `guardrails explain GR-EU-002` for the rationale, the fix and the primary source of any rule, right in the
+> terminal.
+
 ## Why this exists
 
-At [Growth Of Influence](https://growthofinfluence.com), a digital marketing agency, AI agents write and ship a
-lot of content and site code: articles, landing pages, offers, pricing tables, deploys. Code has linters, type
-checkers and CI. Copy had a human reviewer who was not always in the loop.
+At [Growth Of Influence](https://growthofinfluence.com) AI agents write and ship a lot of content and site code:
+articles, landing pages, offers, pricing tables, deploys. Code has linters, type checkers and CI. Copy had a
+human reviewer who was not always in the loop.
 
 The rules in this repository came from real near misses in that production work:
 
-- an agent-written offer that described a website build as "free" while a monthly hosting plan paid for it, which
-  EU consumer law lists as unfair in all circumstances;
-- a price shown to consumers with no VAT-inclusive figure next to it;
-- an agent that "fixed" a page by editing the production server directly, so the repository and the live site
-  drifted apart.
+| Near miss | What could have gone wrong | Rule that now catches it |
+| --- | --- | --- |
+| An agent-written offer described a website build as "free" while a monthly hosting plan paid for it | EU consumer law lists this as unfair in all circumstances | `GR-EU-001` |
+| A price shown to consumers with no VAT-inclusive figure next to it | Consumer price rules require the final price | `GR-EU-002` |
+| An agent "fixed" a page by editing the production server directly | The repository and the live site drifted apart | `GR-DEP-001` to `003` |
 
-Each became a written house rule, then a hook, then a rule pack. The public Claude Code hook collections we found enforce code
-rules (formatting, tests, dangerous shell commands). None of them enforce the business and legal rules of the
-content itself. That is the gap this fills.
+Each became a written house rule, then a hook, then a rule pack. The pricing logic behind the first case is the
+kind of thing agencies publish on a page like our [website hosting plans](https://growthofinfluence.com/website-hosting/),
+where one careless word changes the legal meaning of the offer.
+
+The public Claude Code hook collections we found enforce code rules (formatting, tests, dangerous shell
+commands). None of them enforce the business and legal rules of the content itself. That is the gap this fills.
 
 ## Features
 
@@ -102,12 +155,15 @@ content itself. That is the gap this fills.
 | `deploy-safety` | GR-DEP-001 to 003 | scp, rsync, ssh and local writes to protected hosts or paths, edits to protected files, force pushes and direct pushes to protected branches; every block says "open a pull request" |
 
 Every rule carries a rationale, a fix and a citation to the primary source. See the full
-[rule reference](docs/rules.md) or run `guardrails explain GR-EU-002`.
+[rule reference](docs/rules.md) or run `guardrails explain GR-EU-002`. The `aeo-seo` pack encodes the same
+answer-first structure we track across the vendors in our
+[AI search optimization market map](https://growthofinfluence.com/ai-search-optimization-companies/).
 
-Also:
+<details>
+<summary><b>More features</b></summary>
 
 - **Offset-exact findings** for HTML and Markdown: markup, code blocks, URLs and front-matter keys are ignored,
-  entities are decoded, and every finding points at the original line and column.
+  entities are decoded and every finding points at the original line and column.
 - **Three ways to silence a finding:** `[[guardrails.ignore]]` by path, `guardrails-ignore: GR-XXX reason` on a
   line, or `guardrails-ignore-file: GR-XXX` for a file.
 - **Outputs:** text, JSON, SARIF 2.1.0 for code scanning, GitHub annotations for pull requests.
@@ -115,9 +171,12 @@ Also:
   [writing rules](docs/writing-rules.md).
 - **Zero dependencies.** Standard library only, Python 3.9 to 3.13, with a built-in TOML fallback for 3.9 and 3.10.
 
+</details>
+
 ## How it works
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#0D1B4B','primaryTextColor':'#ffffff','primaryBorderColor':'#F5A623','lineColor':'#F5A623','secondaryColor':'#FFF4E0','tertiaryColor':'#ffffff'}}}%%
 flowchart LR
     A[Agent tool call] --> B{PreToolUse<br/>action rules<br/>+ secrets}
     B -- deny + reason --> A
@@ -145,7 +204,8 @@ Install as a plugin (needs `python3` 3.9+ on the PATH, nothing else):
 
 Or in one step from a terminal: `claude plugin install agency-guardrails --marketplace chris-fountoulis/agency-guardrails`.
 
-Or wire the CLI into `.claude/settings.json`:
+<details>
+<summary><b>Or wire the CLI into <code>.claude/settings.json</code></b></summary>
 
 ```json
 {
@@ -159,10 +219,17 @@ Or wire the CLI into `.claude/settings.json`:
 }
 ```
 
-The hooks follow the Claude Code hooks contract: PreToolUse answers with `permissionDecision: "deny"` and a reason,
-PostToolUse with `decision: "block"` (errors) or `additionalContext` (warnings), Stop with `decision: "block"` and
-honours `stop_hook_active`. On their own errors they exit 1 and fail open. Details in
-[docs/claude-code.md](docs/claude-code.md).
+</details>
+
+| Hook | Answers with |
+| --- | --- |
+| `PreToolUse` | `permissionDecision: "deny"` and a reason the model reads |
+| `PostToolUse` | `decision: "block"` for errors, `additionalContext` for warnings |
+| `Stop` | `decision: "block"` while errors remain; honours `stop_hook_active` |
+
+> [!NOTE]
+> On their own errors the hooks exit 1 and fail open: a broken config shows up in the transcript instead of
+> freezing a working session. Details in [docs/claude-code.md](docs/claude-code.md).
 
 ## GitHub Action
 
@@ -209,8 +276,25 @@ block_direct_push = true
 severity = "warn"
 ```
 
+> [!IMPORTANT]
+> Unknown keys, packs, rules and options are rejected with the list of valid ones. A typo in `guardrails.toml`
+> fails loudly instead of silently switching a rule off.
+
 The config is discovered by walking up from the first path checked (`guardrails.toml`, `.guardrails.toml` or
-`guardrails.json`). Unknown keys, packs, rules and options are rejected with the list of valid ones.
+`guardrails.json`).
+
+## Methodology
+
+How the rules were built and how we know they work. The full write-up is in
+[docs/methodology.md](docs/methodology.md).
+
+| Question | Answer |
+| --- | --- |
+| Where do the rules come from? | Real near misses in agent-written content and deploys at Growth Of Influence, each one written down as a house rule before it became code |
+| What backs each rule? | A primary source: EU directives on EUR-Lex, Google Search Central, W3C WCAG, the WHATWG HTML standard, NIST, OWASP, MITRE CWE and GitHub docs. The registry refuses a rule without an https citation |
+| How is each rule tested? | Positive and negative tests for every rule, plus a sample site that must fail in `bad/` and pass in `fixed/` |
+| Where does it run? | CI on Python 3.9, 3.10, 3.11, 3.12 and 3.13, the GitHub Action run both ways on the sample site and the CLI checking this repository on every push |
+| What are the limits? | Pattern heuristics in English, not a legal review. A clean run means no rule matched |
 
 ## Roadmap
 
@@ -230,7 +314,19 @@ new rules with a primary source. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
 
 [MIT](LICENSE). Engineering tooling, not legal advice.
 
----
+## About
 
-Built by [Chris Fountoulis](https://github.com/chris-fountoulis) at [Growth Of Influence](https://growthofinfluence.com),
-where AI agents write the first draft and these guardrails decide what reaches a human reviewer.
+agency-guardrails is built and maintained by [Chris Fountoulis](https://chrisfountoulis.com), founder of
+[Growth Of Influence](https://growthofinfluence.com), a digital marketing agency in Thessaloniki. AI agents write
+the first draft there and these guardrails decide what reaches a human reviewer. If you want to run the same
+setup in your own agency, [book a call](https://growthofinfluence.com/meeting).
+
+<p align="center">
+  <img src=".github/assets/footer.svg" alt="agency-guardrails footer: Growth Of Influence" width="100%">
+</p>
+
+<p align="center">
+  Built by <a href="https://chrisfountoulis.com">Chris Fountoulis</a> at
+  <a href="https://growthofinfluence.com">Growth Of Influence</a> ·
+  <a href="https://github.com/chris-fountoulis">GitHub</a>
+</p>
