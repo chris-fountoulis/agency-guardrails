@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import importlib
+import importlib.util
 import json
 import os
+import re
+import sys
 from dataclasses import dataclass, field
 from fnmatch import fnmatchcase
 from pathlib import Path
@@ -125,7 +129,7 @@ class Config:
 
 # loading -------------------------------------------------------------------
 
-_TOP_KEYS = {"packs", "enable", "disable", "include", "exclude", "extend_exclude", "ignore", "fail_on"}
+_TOP_KEYS = {"packs", "enable", "disable", "include", "exclude", "extend_exclude", "ignore", "fail_on", "plugins"}
 _HOOK_KEYS = {"pre_write_packs", "post_write", "stop_check", "max_findings"}
 
 
@@ -160,8 +164,38 @@ def _str_list(value: Any, where: str) -> List[str]:
     return list(value)
 
 
+def load_plugins(entries: List[str], root: Path) -> None:
+    """Import custom rule modules so their @register decorators run.
+
+    An entry ending in ``.py`` is a file path relative to the config file;
+    anything else is an importable module name.
+    """
+    for entry in entries:
+        try:
+            if entry.endswith(".py"):
+                path = (root / entry).resolve()
+                if not path.is_file():
+                    raise ConfigError("plugin file not found: %s" % entry)
+                name = "guardrails_plugin_" + re.sub(r"\W", "_", str(path))
+                if name in sys.modules:
+                    continue
+                spec = importlib.util.spec_from_file_location(name, str(path))
+                module = importlib.util.module_from_spec(spec)  # type: ignore[arg-type]
+                sys.modules[name] = module
+                spec.loader.exec_module(module)  # type: ignore[union-attr]
+            else:
+                importlib.import_module(entry)
+        except ConfigError:
+            raise
+        except Exception as exc:
+            raise ConfigError("could not load plugin %s: %s" % (entry, exc)) from None
+
+
 def from_dict(data: Dict[str, Any], root: Path, source: Optional[Path] = None) -> Config:
     cfg = Config(root=root, source=source)
+    top_table = data.get("guardrails", {})
+    if isinstance(top_table, dict) and "plugins" in top_table:
+        load_plugins(_str_list(top_table["plugins"], "guardrails.plugins"), root)
     known_packs = set(registry.packs())
     known_ids = {r.id for r in registry.all_rules()}
 

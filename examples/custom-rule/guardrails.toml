@@ -1,0 +1,6 @@
+[guardrails]
+plugins = ["acme_rules.py"]
+packs = ["acme-brand", "house-style"]
+
+[acme-brand]
+product = "SourDough Pro"
