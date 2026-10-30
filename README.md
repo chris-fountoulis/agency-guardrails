@@ -167,7 +167,7 @@ honours `stop_hook_active`. On their own errors they exit 1 and fail open. Detai
 ## GitHub Action
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v7
 - uses: chris-fountoulis/agency-guardrails@v0.1.0
   with:
     paths: content site

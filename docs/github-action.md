@@ -24,7 +24,7 @@ jobs:
   guardrails:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: chris-fountoulis/agency-guardrails@v0.1.0
         with:
           paths: content site
@@ -75,7 +75,7 @@ permissions:
   security-events: write
 
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v7
   - uses: chris-fountoulis/agency-guardrails@v0.1.0
     with:
       upload-sarif: "true"
@@ -90,7 +90,7 @@ Advanced Security; the annotations work everywhere.
 To lint only the files a pull request touches, compute the list first and pass it as `paths`:
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v7
   with:
     fetch-depth: 0
 - id: changed
