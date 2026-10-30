@@ -25,10 +25,10 @@ The repository is both a Claude Code plugin and a one-plugin marketplace. In Cla
 /plugin install agency-guardrails@agency-guardrails
 ```
 
-On Claude Code 2.1.275 or later the two steps are one:
+From a terminal, the `claude` CLI does both steps at once:
 
-```text
-/plugin install agency-guardrails --marketplace chris-fountoulis/agency-guardrails
+```bash
+claude plugin install agency-guardrails --marketplace chris-fountoulis/agency-guardrails
 ```
 
 The plugin needs `python3` (3.9 or newer) on the PATH. It runs the copy of the package bundled in the plugin

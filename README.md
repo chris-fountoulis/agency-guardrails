@@ -143,7 +143,7 @@ Install as a plugin (needs `python3` 3.9+ on the PATH, nothing else):
 /plugin install agency-guardrails@agency-guardrails
 ```
 
-On Claude Code 2.1.275 or later, in one step: `/plugin install agency-guardrails --marketplace chris-fountoulis/agency-guardrails`.
+Or in one step from a terminal: `claude plugin install agency-guardrails --marketplace chris-fountoulis/agency-guardrails`.
 
 Or wire the CLI into `.claude/settings.json`:
 
