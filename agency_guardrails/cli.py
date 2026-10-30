@@ -7,7 +7,7 @@ import os
 import sys
 from typing import List, Optional
 
-from agency_guardrails import __version__, output, registry
+from agency_guardrails import __version__, catalog, output, registry
 from agency_guardrails.config import FAIL_ON, ConfigError, load
 from agency_guardrails.engine import check_paths, failed
 
@@ -67,6 +67,29 @@ def cmd_check(args: argparse.Namespace) -> int:
     return EXIT_FINDINGS if failed(findings, fail_on) else EXIT_OK
 
 
+def cmd_rules(args: argparse.Namespace) -> int:
+    rules = registry.all_rules()
+    if args.pack:
+        rules = [r for r in rules if r.pack in args.pack]
+    if args.format == "json":
+        sys.stdout.write(catalog.rules_json(rules))
+    elif args.format == "markdown":
+        sys.stdout.write(catalog.rules_markdown(rules))
+    else:
+        sys.stdout.write(catalog.rules_text(rules))
+    return EXIT_OK
+
+
+def cmd_explain(args: argparse.Namespace) -> int:
+    try:
+        rule = registry.get(args.rule_id)
+    except KeyError:
+        sys.stderr.write("guardrails: unknown rule %s (see `guardrails rules`)\n" % args.rule_id)
+        return EXIT_USAGE
+    sys.stdout.write(catalog.explain(rule))
+    return EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="guardrails",
@@ -89,6 +112,15 @@ def build_parser() -> argparse.ArgumentParser:
     color.add_argument("--color", dest="color", action="store_true", default=None)
     color.add_argument("--no-color", dest="color", action="store_false")
     p.set_defaults(func=cmd_check)
+
+    p = sub.add_parser("rules", help="list every rule with its citation")
+    p.add_argument("--format", choices=["text", "json", "markdown"], default="text")
+    p.add_argument("--pack", action="append", help="only this pack (repeatable)")
+    p.set_defaults(func=cmd_rules)
+
+    p = sub.add_parser("explain", help="explain one rule: why, fix, source and options")
+    p.add_argument("rule_id", metavar="RULE", help="rule id, for example GR-EU-001")
+    p.set_defaults(func=cmd_explain)
     return parser
 
 

@@ -74,5 +74,29 @@ class CheckCommandTest(unittest.TestCase):
         self.assertEqual(run()[0], 2)
 
 
+class RulesCommandTest(unittest.TestCase):
+    def test_list(self):
+        code, out, _ = run("rules")
+        self.assertEqual(code, 0)
+        self.assertIn("eu-marketing:", out)
+        self.assertIn("GR-EU-001", out)
+        self.assertIn("https://eur-lex.europa.eu/eli/dir/2005/29/oj", out)
+
+    def test_json_and_markdown(self):
+        _, out, _ = run("rules", "--format", "json", "--pack", "secrets")
+        self.assertEqual({r["pack"] for r in json.loads(out)}, {"secrets"})
+        _, out, _ = run("rules", "--format", "markdown")
+        self.assertTrue(out.startswith("# Rule reference"))
+
+    def test_explain(self):
+        code, out, _ = run("explain", "gr-eu-002")
+        self.assertEqual(code, 0)
+        self.assertIn("GR-EU-002  Price without a VAT-inclusive figure", out)
+        self.assertIn("vat_rate = 24", out)
+        self.assertIn("https://eur-lex.europa.eu/eli/dir/1998/6/oj", out)
+        code, _, err = run("explain", "GR-NOPE-001")
+        self.assertEqual(code, 2)
+
+
 if __name__ == "__main__":
     unittest.main()

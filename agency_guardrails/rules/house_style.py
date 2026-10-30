@@ -30,9 +30,9 @@ class BannedCharacters(Rule):
     pack = PACK
     severity = ERROR
     rationale = (
-        "Some characters are a tell. Language models reach for the em dash far more often than most human "
-        "writers, so a house rule against it keeps AI-drafted copy from reading as machine-written. The list "
-        "is configurable for any character your style guide bans."
+        "Some characters are a tell. AI-drafted copy leans on the em dash, so a house rule against it keeps "
+        "copy from reading as machine-written, and one config line bans any other character your style "
+        "guide rules out."
     )
     fix = "Use a comma, a period, a colon or a plain hyphen instead."
     citation = "https://www.unicode.org/charts/PDF/U2000.pdf"
