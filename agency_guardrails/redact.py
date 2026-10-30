@@ -77,7 +77,7 @@ def generic_pattern(key_names: Iterable[str] = KEY_NAMES) -> Pattern[str]:
     names = "|".join(re.escape(k).replace(r"_", r"[_-]?") for k in sorted(set(key_names), key=len, reverse=True))
     return re.compile(
         r"(?i)(?<![A-Za-z0-9])(?P<key>[A-Za-z0-9_.-]*(?:%s))[\"']?\s*(?::=|=>|[:=])\s*(?P<q>[\"'`]?)"
-        r"(?P<val>[^\s\"'`;,)}\]]{12,})(?P=q)" % names
+        r"(?P<val>[^\s\"'`;,(){}\[\]]{12,})(?P=q)" % names
     )
 
 
@@ -95,6 +95,8 @@ def looks_random(value: str, min_entropy: float = 3.5) -> bool:
     if len(set(value)) < 6:
         return False
     if re.fullmatch(r"[a-z]+(?:[_-][a-z]+)*", value):  # an ordinary identifier
+        return False
+    if re.fullmatch(r"[A-Za-z_]+(?:\.[A-Za-z_]+)+", value):  # a dotted name such as config.api_token
         return False
     return shannon_entropy(value) >= min_entropy
 

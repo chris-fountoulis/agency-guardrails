@@ -76,7 +76,7 @@ class GenericTest(unittest.TestCase):
 
     def test_placeholders_and_words_pass(self):
         for value in ("your_api_key_here", "changeme-please-now", "${API_TOKEN_VALUE}", "xxxxxxxxxxxxxxxx",
-                      "password_reset_token_field", "os.environ.get('TOKEN')"):
+                      "password_reset_token_field", "os.environ.get('TOKEN')", "settings.api_token_value"):
             self.assertEqual(run_rule(self.RULE, "token = %s\n" % value, path="a.py"), [], value)
 
     def test_not_double_reported(self):
