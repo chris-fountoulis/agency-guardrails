@@ -40,7 +40,7 @@ def render_text(findings: List[Finding], files_checked: Optional[int] = None, co
             lines.append(_c("bold", f.path or "(input)", color))
             current = f.path
         sev = _c(f.severity, "%-5s" % f.severity, color)
-        lines.append("  %d:%d  %s  %s  %s" % (f.line, f.column, sev, f.rule_id, f.message))
+        lines.append("  %-7s  %s  %-10s  %s" % ("%d:%d" % (f.line, f.column), sev, f.rule_id, f.message))
     if findings:
         lines.append("")
     lines.append(summary_line(findings, files_checked))

@@ -35,7 +35,7 @@ class CheckCommandTest(unittest.TestCase):
         with temp_tree(self.FILES):
             code, out, _ = run("check", "--no-color")
             self.assertEqual(code, 1)
-            self.assertIn("site/bad.md\n  3:6  error  GR-STY-001", out)
+            self.assertIn("site/bad.md\n  3:6      error  GR-STY-001", out)
             self.assertIn("GR-EU-002", out)
             self.assertTrue(out.endswith("3 files checked, 2 errors, 0 warnings\n"), out)
             code, out, _ = run("check", "site/good.md")

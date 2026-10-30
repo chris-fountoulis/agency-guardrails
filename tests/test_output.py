@@ -14,8 +14,8 @@ F = [
 class OutputTest(unittest.TestCase):
     def test_text(self):
         out = output.render_text(F, files_checked=2)
-        self.assertIn("site/a.md\n  3:7  error  GR-EU-001  free, with fee\n", out)
-        self.assertIn("  9:1  warn   GR-SEO-001", out)
+        self.assertIn("site/a.md\n  3:7      error  GR-EU-001   free, with fee\n", out)
+        self.assertIn("  9:1      warn   GR-SEO-001", out)
         self.assertTrue(out.endswith("2 files checked, 2 errors, 1 warning\n"))
         self.assertEqual(output.render_text([], 1), "1 file checked, 0 errors, 0 warnings\n")
         self.assertIn("\033[31m", output.render_text(F, color=True))
