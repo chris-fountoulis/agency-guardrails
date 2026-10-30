@@ -128,6 +128,12 @@ def cmd_redact(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def cmd_hook(args: argparse.Namespace) -> int:
+    from agency_guardrails import hooks
+
+    return hooks.run(args.event, sys.stdin, sys.stdout, sys.stderr, config_path=args.config)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="guardrails",
@@ -171,6 +177,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--check", action="store_true", help="exit 1 if anything was redacted")
     p.add_argument("--no-generic", action="store_true", help="only redact known token shapes and private keys")
     p.set_defaults(func=cmd_redact)
+
+    p = sub.add_parser("hook", help="run as a Claude Code hook (reads the hook JSON on stdin)")
+    p.add_argument("event", choices=["pre-tool-use", "post-tool-use", "stop"])
+    p.add_argument("-c", "--config", help="path to guardrails.toml (default: discovered from the hook cwd)")
+    p.set_defaults(func=cmd_hook)
     return parser
 
 
