@@ -159,12 +159,19 @@ def registry_title(rule_id: str) -> str:
 
 
 def for_agent(findings: List[Finding], limit: int = 20) -> str:
-    """Compact, actionable text for a model to read in a hook response."""
+    """Compact, actionable text for a model to read in a hook response.
+
+    Errors come first. Each rule's fix is shown once, and not at all for
+    blocked actions whose message already says what to do instead.
+    """
     lines = []
-    for f in findings[:limit]:
+    shown_fix = set()
+    ordered = sorted(findings, key=lambda f: (f.severity != ERROR, f.sort_key()))
+    for f in ordered[:limit]:
         where = "%s:%d:%d " % (f.path, f.line, f.column) if f.path else ""
         lines.append("- %s%s (%s): %s" % (where, f.rule_id, f.severity, f.message))
-        if f.fix:
+        if f.fix and f.rule_id not in shown_fix and not f.message.startswith("BLOCKED"):
+            shown_fix.add(f.rule_id)
             lines.append("  Fix: %s" % f.fix)
     if len(findings) > limit:
         lines.append("- ... and %d more (run `guardrails check` to see all)" % (len(findings) - limit))

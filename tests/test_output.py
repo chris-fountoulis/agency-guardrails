@@ -55,5 +55,20 @@ class OutputTest(unittest.TestCase):
         self.assertIn("and 1 more", text)
 
 
+    def test_for_agent_orders_errors_and_dedupes_fixes(self):
+        findings = [
+            Finding("GR-SEO-001", "warn", "w", "a.md", 1, 1, fix="fix w"),
+            Finding("GR-EU-002", "error", "e1", "a.md", 5, 1, fix="fix e"),
+            Finding("GR-EU-002", "error", "e2", "a.md", 9, 1, fix="fix e"),
+            Finding("GR-DEP-001", "error", "BLOCKED: no", fix="fix d"),
+        ]
+        lines = output.for_agent(findings).splitlines()
+        self.assertTrue(lines[0].startswith("- GR-DEP-001 (error): BLOCKED"))
+        self.assertEqual(lines[1], "- a.md:5:1 GR-EU-002 (error): e1")
+        self.assertEqual(lines[2], "  Fix: fix e")
+        self.assertEqual(lines[3], "- a.md:9:1 GR-EU-002 (error): e2")
+        self.assertEqual(lines[4], "- a.md:1:1 GR-SEO-001 (warn): w")
+
+
 if __name__ == "__main__":
     unittest.main()
