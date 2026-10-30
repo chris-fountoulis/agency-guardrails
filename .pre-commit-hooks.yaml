@@ -1,0 +1,7 @@
+- id: guardrails
+  name: agency-guardrails
+  description: Lint content and code for business, legal, house-style and secrets rules.
+  entry: guardrails check
+  language: python
+  types: [text]
+  require_serial: true
