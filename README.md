@@ -90,7 +90,7 @@ examples/site/bad/bakery-website-speed.html
 
 </details>
 
-Inside Claude Code the same findings reach the agent the moment it writes the file, and a risky command never runs:
+Inside Claude Code the same findings reach the agent the moment it wirtes the file, and a risky command never runs:
 
 ```json
 {
@@ -126,7 +126,7 @@ echo "Our new offer" | guardrails check --stdin-filename draft.md -   # check te
 ## Why this exists
 
 At [Growth Of Influence](https://growthofinfluence.com) AI agents write and ship a lot of content and site code:
-articles, landing pages, offers, pricing tables, deploys. Code has linters, type checkers and CI. Copy had a
+articles, landing pages , offers, pricing tables, deploys. Code has linters , type checkers and CI. Copy had a
 human reviewer who was not always in the loop.
 
 The rules in this repository came from real near misses in that production work:
@@ -141,7 +141,7 @@ Each became a written house rule, then a hook, then a rule pack. The pricing log
 kind of thing agencies publish on a page like our [website hosting plans](https://growthofinfluence.com/website-hosting/),
 where one careless word changes the legal meaning of the offer.
 
-The public Claude Code hook collections we found enforce code rules (formatting, tests, dangerous shell
+The public Claude Code hook collections we found enforce code rules (formatting, tests , dangerous shell
 commands). None of them enforce the business and legal rules of the content itself. That is the gap this fills.
 
 ## Features
@@ -162,11 +162,11 @@ answer-first structure we track across the vendors in our
 <details>
 <summary><b>More features</b></summary>
 
-- **Offset-exact findings** for HTML and Markdown: markup, code blocks, URLs and front-matter keys are ignored,
+- **Offset-exact findings** for HTML and Markdown: markup, code blocks , URLs and front-matter keys are ignored,
   entities are decoded and every finding points at the original line and column.
 - **Three ways to silence a finding:** `[[guardrails.ignore]]` by path, `guardrails-ignore: GR-XXX reason` on a
   line, or `guardrails-ignore-file: GR-XXX` for a file.
-- **Outputs:** text, JSON, SARIF 2.1.0 for code scanning, GitHub annotations for pull requests.
+- **Outputs:** text, JSON, SARIF 2.1.0 for code scanning , GitHub annotations for pull requests.
 - **Custom rules** as plain Python classes, loaded with `plugins = ["my_rules.py"]`. See
   [writing rules](docs/writing-rules.md).
 - **Zero dependencies.** Standard library only, Python 3.9 to 3.13, with a built-in TOML fallback for 3.9 and 3.10.
@@ -190,7 +190,7 @@ flowchart LR
     G --> H[Human review and merge]
 ```
 
-One engine, one config, four entry points: the CLI, the three Claude Code hooks, the GitHub Action and a
+One engine, one config, four entry points : the CLI, the three Claude Code hooks , the GitHub Action and a
 pre-commit hook. A rule written once runs in all of them.
 
 ## Claude Code
@@ -301,7 +301,7 @@ How the rules were built and how we know they work. The full write-up is in
 - Publish to PyPI so `pipx install agency-guardrails` works without a git URL.
 - A `--baseline` file, so a large existing site can adopt the rules without fixing every old page first.
 - Autofix for the mechanical findings (banned characters, `rel="noopener"`, VAT-inclusive figures).
-- Phrase lists for more EU languages in the `eu-marketing` pack, starting with Greek, German and French.
+- Phrase lists for more EU languages in the `eu-marketing` pack, starting with Greek , German and French.
 - A `--changed` mode that checks only the lines a pull request touches.
 
 ## Contributing

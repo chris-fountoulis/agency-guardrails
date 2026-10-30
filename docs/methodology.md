@@ -37,12 +37,12 @@ exists because something shipped or nearly shipped:
 | Articles that buried the answer below an introduction | Answer the question in the first 50 to 70 words | `GR-SEO-001` |
 
 The path was the same each time. A person caught the mistake in review. The fix went into a written rule.
-Agents kept missing the written rule, so it became a Claude Code hook. The hook logic was then generalised into
+Agents kept missing the written rule , so it became a Claude Code hook. The hook logic was then generalised into
 the rule packs in this repository: client names, hosts and paths became configuration and nothing
 agency-specific stayed in the code.
 
 > [!NOTE]
-> We copy mechanisms, not facts. The packs ship with no client names, no hosts and no brand words. You add your
+> We copy mechanisms , not facts. The packs ship with no client names, no hosts and no brand words. You add your
 > own in `guardrails.toml` and the consent registry.
 
 ## Primary sources
@@ -95,7 +95,7 @@ python3 -m unittest discover -s tests -t .
 
 > [!TIP]
 > Test strings that look like credentials are assembled at runtime from fragments in `tests/fakes.py`. The
-> repository never holds a literal token, so secret scanners have nothing to flag and the secrets pack can still
+> repository never holds a literal token , so secret scanners have nothing to flag and the secrets pack can still
 > be tested against realistic shapes.
 
 ## The example site contract
@@ -108,7 +108,7 @@ would approve. The tests treat both as a contract:
 - `fixed/` must produce zero findings across both files.
 
 A change that makes a rule miss its example or fire on the fixed copy fails the build. CI then checks the same
-pair a second time through the CLI and a third time through the GitHub Action.
+pair a second time throught the CLI and a third time through the GitHub Action.
 
 ```mermaid
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#0D1B4B','primaryTextColor':'#ffffff','primaryBorderColor':'#F5A623','lineColor':'#F5A623','secondaryColor':'#FFF4E0','tertiaryColor':'#ffffff'}}}%%
@@ -140,7 +140,7 @@ fallback for 3.9 and 3.10 is tested against `tomllib` on the versions that have 
 
 The repository checks itself. The root [`guardrails.toml`](../guardrails.toml) enables the `house-style`,
 `secrets` and `deploy-safety` packs for the whole tree, excluding only `examples/site/bad/`, which is wrong on
-purpose. CI runs `guardrails check .` on every push, so the README, the docs and the code comments follow the
+purpose. CI runs `guardrails check .` on every push, so the README , the docs and the code comments follow the
 same no-dash rule the tool enforces. The marketing packs are off for the repository because the docs quote the
 very phrases those rules exist to catch.
 
@@ -150,7 +150,7 @@ very phrases those rules exist to catch.
 > Read these before relying on a green check.
 
 - **Heuristics, not legal review.** The `eu-marketing` rules match patterns that often signal a problem. They
-  cannot read intent, context outside the file or the terms of the actual offer. A person still owns what ships.
+  cannot read intent , context outside the file or the terms of the actual offer. A person still owns what ships.
 - **English phrase lists.** The built-in phrases for "free", conditions and guarantees are English. Copy in other
   languages needs its own lists through configuration or a plugin.
 - **VAT is a configured rate.** `GR-EU-002` checks for an inclusive figure at the `vat_rate` you set (24 by

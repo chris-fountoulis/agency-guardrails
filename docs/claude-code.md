@@ -52,7 +52,7 @@ directory through `hooks/guardrails_hook.py`, so there is nothing to pip install
 ## Option 2: settings.json with the CLI
 
 Install the CLI (`pipx install git+https://github.com/chris-fountoulis/agency-guardrails`) and add this to
-`.claude/settings.json` in the project, or `~/.claude/settings.json` for every project:
+`.claude/settings.json` in the project , or `~/.claude/settings.json` for every project:
 
 ```json
 {
@@ -112,8 +112,8 @@ Each handler reads the hook payload as JSON on stdin. Fields used:
 | `stop_hook_active` | Stop | Skip when Claude Code is already continuing because of a Stop hook |
 
 Exit codes: `0` with JSON on stdout when there is a decision, `0` with no output when everything is clean. A hook
-that cannot read its input or its config, or hits a bug, writes the reason to stderr and exits `1`, which Claude
-Code treats as a non-blocking error. guardrails fails open on its own errors on purpose: a broken config should
+that cannot read its input or its config, or hits a bug, wirtes the reason to stderr and exits `1`, which Claude
+Code treats as a non-blocking error. guardrails fails open on its own errors on purpose : a broken config should
 show up in the transcript, not freeze a working session. If you want a hard stop on misconfiguration, run
 `guardrails check` in CI as well.
 
@@ -131,7 +131,7 @@ A blocked deploy, from the sample site config in `examples/site/guardrails.toml`
 }
 ```
 
-The agent reads the reason, does not retry the scp, and opens a pull request instead. Reads pass: `ssh prod cat
+The agent reads the reason , does not retry the scp, and opens a pull request instead. Reads pass: `ssh prod cat
 file`, `scp prod:/file ./local` and `rsync prod:/dir ./mirror` are not writes to the protected target.
 
 ## Try a hook by hand
@@ -150,7 +150,7 @@ Every deploy-safety block names the override token (`GUARDRAILS_OVERRIDE=1` by d
 `[deploy-safety]` table). A command that contains it passes.
 
 > [!CAUTION]
-> Keep the override for a site that is down and pair it with a rule in your team docs: whoever uses it syncs the
+> Keep the override for a site that is down and pair it with a rule in your team docs : whoever uses it syncs the
 > repository and posts what changed. Set `override = ""` to remove the escape hatch entirely.
 
 [Back to README](../README.md)

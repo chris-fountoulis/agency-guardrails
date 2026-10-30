@@ -2,7 +2,7 @@
 
 [Back to README](README.md)
 
-Thanks for helping make agency content safer to ship. Bug reports, false positives, new rules and better
+Thanks for helping make agency content safer to ship. Bug reports, false positives , new rules and better
 citations are all welcome.
 
 **On this page:** [Development setup](#development-setup) · [Before you open a pull request](#before-you-open-a-pull-request) ·
@@ -33,12 +33,12 @@ guardrails check .
 ```
 
 - **New or changed rule:** add positive and negative tests, cite the primary source (the directive, the
-  standard or the official documentation, not a blog post), then regenerate `docs/rules.md` with
+  standard or the official documentation, not a blog post) , then regenerate `docs/rules.md` with
   `python scripts/gen_rules_doc.py`. See [docs/writing-rules.md](docs/writing-rules.md).
 - **False positive:** the most useful report is the smallest text that triggers it. Add it as a negative test.
 - **Credentials in tests:** build them at runtime from fragments, as `tests/fakes.py` does. Never commit a literal
   token, even a revoked one.
-- **House style for this repo:** no em or en dashes anywhere (CI checks), Conventional Commit messages
+- **House style for this repo:** no em or en dashes anywhere (CI checks) , Conventional Commit messages
   (`feat(rules): ...`, `fix(hooks): ...`, `docs: ...`).
 
 ## Scope

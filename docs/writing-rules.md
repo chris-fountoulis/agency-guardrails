@@ -3,7 +3,7 @@
 [Back to README](../README.md)
 
 Every rule is a small Python class. Built-in rules live in `agency_guardrails/rules/`; your own rules can live in
-any module and load through `plugins` in `guardrails.toml`. Both kinds get the same config validation, inline and
+any module and load through `plugins` in `guardrails.toml`. Both kinds get the same config validation , inline and
 path ignores, severity overrides, output formats, Claude Code hooks and GitHub Action support.
 
 > [!IMPORTANT]
@@ -60,7 +60,7 @@ product = "SourDough Pro"
 ```
 
 > [!NOTE]
-> `@register` validates the class when the module is imported: a rule without a title, rationale, an https
+> `@register` validates the class when the module is imported : a rule without a title, rationale, an https
 > citation or a well-formed id fails loudly instead of shipping undocumented.
 
 ## What a rule can read
