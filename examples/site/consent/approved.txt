@@ -1,0 +1,3 @@
+# Consent registry: one approved client name per line.
+# Format: name | date consent was given | where the written consent lives
+Acme Bakery | 2026-01-15 | signed case study release in the shared drive

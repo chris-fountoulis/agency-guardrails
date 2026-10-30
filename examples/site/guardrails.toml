@@ -1,0 +1,19 @@
+# Example configuration for the sample site. Run from the repository root:
+#   guardrails check examples/site/bad
+[guardrails]
+packs = ["eu-marketing", "aeo-seo", "house-style", "secrets", "deploy-safety"]
+fail_on = "error"
+
+[eu-marketing]
+vat_rate = 24
+watch_names = ["Acme Bakery", "Northwind Fitness"]
+consent_registry = "consent/approved.txt"
+
+[house-style]
+banned_chars = ["\u2014", "\u2013"]
+banned_words = ["utilize => use", "game-changer => a plain description of what it does"]
+
+[deploy-safety]
+protected_hosts = ["prod.example.com"]
+protected_paths = ["/srv/www/acme-bakery/public_html"]
+block_direct_push = true
