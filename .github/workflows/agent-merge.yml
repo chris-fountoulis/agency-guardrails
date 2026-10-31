@@ -1,0 +1,76 @@
+name: Agent merge
+
+# The weekly maintainer agent pushes a claude/weekly-* branch. This workflow runs the full CI
+# and the leak gate on it, then opens a pull request and merges it with a merge commit.
+# Kill switch: set the repository variable AGENTS_ENABLED to false.
+
+on:
+  push:
+    branches: ["claude/weekly-**"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-merge
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    if: vars.AGENTS_ENABLED != 'false'
+    uses: ./.github/workflows/ci.yml
+
+  gate:
+    if: vars.AGENTS_ENABLED != 'false'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Leak gate
+        env:
+          LEAK_HMAC_KEY: ${{ secrets.LEAK_HMAC_KEY }}
+        run: python .github/scripts/agent_gate.py origin/main
+
+  merge:
+    needs: [ci, gate]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Open and merge the pull request
+        run: |
+          git log -1 --format=%B > body.md
+          printf '\n---\nVerified before merge: full CI matrix and the leak gate ([run](%s)).\n' \
+            "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> body.md
+          pr=$(gh pr list --head "$BRANCH" --state open --json number -q '.[0].number')
+          if [ -z "$pr" ]; then
+            gh pr create --base main --head "$BRANCH" --title "$(git log -1 --format=%s)" --body-file body.md
+            pr=$(gh pr list --head "$BRANCH" --state open --json number -q '.[0].number')
+          fi
+          gh pr merge "$pr" --merge --delete-branch
+      - name: Release when the changelog has a new version
+        run: |
+          git fetch origin main --tags
+          git checkout -q origin/main
+          ver=$(grep -m1 -oE '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | tr -d '#[] ')
+          if [ -n "$ver" ] && ! git rev-parse -q --verify "refs/tags/v$ver" >/dev/null; then
+            awk -v v="$ver" '$0 ~ "^## \\[" v "\\]" {f=1; next} f && /^## \[/ {exit} f' CHANGELOG.md > notes.md
+            gh release create "v$ver" --target main --title "v$ver" --notes-file notes.md
+          fi
+      - name: Run main branch workflows
+        # Pushes made with the workflow token do not trigger other workflows, so start them here.
+        run: |
+          gh workflow run ci.yml --ref main
+          if [ -f .github/workflows/pages.yml ]; then gh workflow run pages.yml --ref main; fi
